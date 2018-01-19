@@ -1,0 +1,7 @@
+/.data
+.env
+/logs
+docker-compose.yml
+nginx/sites/
+php-worker/supervisord.conf
+workspace/crontab

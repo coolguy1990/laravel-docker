@@ -1,0 +1,10 @@
+[supervisord]
+nodaemon=true
+[program:laravel-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php /var/www/example/artisan queue:work --sleep=3 --tries=1 --daemon --timeout=60
+autostart=true
+autorestart=true
+numprocs=1
+redirect_stderr=true
+stdout_logfile=/var/www/example/storage/logs/worker.log
