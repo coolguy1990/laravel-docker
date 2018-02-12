@@ -3,5 +3,6 @@
 /logs
 docker-compose.yml
 nginx/sites/
-php-worker/supervisord.conf
+iii:php-worker/supervisord.conf
 workspace/crontab
+.DS_Store
