@@ -2,14 +2,16 @@ FROM laradock/workspace:1.8-71
 
 MAINTAINER Kunal Mangaraj <mangaraj.kunal@gmail.com>
 
-ARG PUID=1000
-ARG PGID=1000
+USER root
 
+ARG PUID=1000
 ENV PUID ${PUID}
+ARG PGID=1000
 ENV PGID ${PGID}
 
 RUN groupadd -g ${PGID} vagrant && \
-    useradd -u ${PUID} -g vagrant -m vagrant && \
+    useradd -u ${PUID} -g vagrant -m vagrant -G docker_env && \
+    usermod -p "*" vagrant && \
     apt-get update -yqq
 
 USER root
