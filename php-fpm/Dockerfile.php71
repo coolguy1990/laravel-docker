@@ -1,0 +1,77 @@
+FROM laradock/php-fpm:2.2-7.1
+
+LABEL maintainer="Kunal Mangaraj <mangaraj.kunal@gmail.com>"
+
+RUN docker-php-ext-install pgsql
+
+RUN pecl install xdebug && \
+    docker-php-ext-enable xdebug
+
+RUN printf "\n" | pecl install -o -f redis \
+    &&  rm -rf /tmp/pear \
+    &&  docker-php-ext-enable redis
+
+RUN pecl install mongodb && \
+    docker-php-ext-enable mongodb
+
+RUN docker-php-ext-install zip
+
+RUN docker-php-ext-install bcmath
+
+RUN apt-get update -y && \
+    apt-get install -y libgmp-dev && \
+    docker-php-ext-install gmp
+
+RUN curl -L -o /tmp/memcached.tar.gz "https://github.com/php-memcached-dev/php-memcached/archive/php7.tar.gz" \
+    && mkdir -p memcached \
+    && tar -C memcached -zxvf /tmp/memcached.tar.gz --strip 1 \
+    && ( \
+        cd memcached \
+        && phpize \
+        && ./configure \
+        && make -j$(nproc) \
+        && make install \
+    ) \
+    && rm -r memcached \
+    && rm /tmp/memcached.tar.gz \
+    && docker-php-ext-enable memcached
+
+RUN docker-php-ext-install exif
+
+RUN docker-php-ext-install opcache
+
+COPY ./opcache.ini /usr/local/etc/php/conf.d/opcache.ini
+
+RUN docker-php-ext-install mysqli
+
+RUN docker-php-ext-install tokenizer
+
+RUN apt-get update -yqq && \
+    apt-get install -y zlib1g-dev libicu-dev g++ && \
+    docker-php-ext-configure intl && \
+    docker-php-ext-install intl
+
+RUN apt-get install -y --force-yes jpegoptim optipng pngquant gifsicle
+
+RUN apt-get install -y libmagickwand-dev imagemagick && \
+    pecl install imagick && \
+    docker-php-ext-enable imagick
+
+ADD ./laravel.ini /usr/local/etc/php/conf.d
+ADD ./laravel.pool.conf /usr/local/etc/php-fpm.d/
+
+RUN rm -r /usr/local/etc/php-fpm.d/www.conf
+
+USER root
+
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+    rm /var/log/lastlog /var/log/faillog
+
+RUN usermod -u 1000 www-data
+
+WORKDIR /var/www
+
+CMD ["php-fpm"]
+
+EXPOSE 9000
