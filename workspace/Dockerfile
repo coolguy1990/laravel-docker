@@ -20,6 +20,9 @@ RUN add-apt-repository -y ppa:ondrej/php && \
   apt-get update -yqq && \
   apt-get -y install libxml2-dev php7.1-soap
 
+RUN apt-get update -yqq && \
+  apt-get -y install php7.1-gmp
+
 ARG TZ=UTC
 ENV TZ ${TZ}
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone

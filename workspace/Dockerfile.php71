@@ -80,6 +80,8 @@ RUN printf "\n" | pecl -q install -o -f redis && \
     echo "extension=redis.so" >> /etc/php/7.1/mods-available/redis.ini && \
     phpenmod redis
 
+RUN apt-get install php7.1-gmp
+
 USER vagrant
 
 ENV NVM_DIR /home/vagrant/.nvm
