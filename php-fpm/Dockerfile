@@ -2,6 +2,9 @@ FROM laradock/php-fpm:1.4-71
 
 MAINTAINER Kunal Mangaraj <mangaraj.kunal@gmail.com>
 
+ENV LANG en_US.utf8
+ENV LC_ALL en_US.utf8
+
 RUN apt-get update -yqq && \
     apt-get -y install libxml2-dev php-soap && \
     docker-php-ext-install soap
@@ -38,6 +41,16 @@ COPY ./opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 RUN docker-php-ext-install mysqli
 
 RUN docker-php-ext-install tokenizer
+
+# Set locales
+RUN apt-get install locales
+RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+RUN echo "fr_FR.UTF-8 UTF-8" >> /etc/locale.gen 
+RUN echo "en_GB.UTF-8 UTF-8" >> /etc/locale.gen
+RUN echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen
+RUN echo "en_IN.UTF-8 UTF-8" >> /etc/locale.gen
+
+RUN locale-gen
 
 RUN apt-get update -yqq && \
     apt-get install -y zlib1g-dev libicu-dev g++ && \
